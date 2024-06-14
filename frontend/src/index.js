@@ -10,6 +10,7 @@ import ProductDetail from './ProductDetail';
 import CartPage from './CartPage';
 import CheckoutPage from './CheckoutPage';
 import OrderConfirmationPage from './OrderConfirmationPage'; 
+import OrderList from './OrderList';
 
 const App = () => (
     <Router>
@@ -23,6 +24,7 @@ const App = () => (
         <Route path="/cart" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/order-confirmation" element={<OrderConfirmationPage />} /> 
+        <Route path="/OrderList" element={<OrderList/>}/>
       </Routes>
     </Router>
 );

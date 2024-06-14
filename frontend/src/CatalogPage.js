@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Grid, Typography, Card, CardContent, CardMedia, Box } from '@mui/material';
+import { Container, Grid, Typography, Card, CardContent, Button, IconButton, CardMedia, Box } from '@mui/material';
 import { styled } from '@mui/system';
 import axios from './axios';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -57,7 +57,18 @@ const AnimatedTitle = styled(Typography)(({ theme }) => ({
     '100%': { opacity: 1, transform: 'translateY(0)' },
   },
 }));
-
+const GradientButton = styled(Button)(({ theme }) => ({
+  background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+  borderRadius: 16,
+  color: 'white',
+  height: 48,
+  padding: '0 30px',
+  boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+  transition: 'background 0.3s ease',
+  '&:hover': {
+    background: 'linear-gradient(45deg, #FE6B8B 40%, #FF8E53 100%)',
+  },
+}));
 const CatalogPage = () => {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
@@ -79,6 +90,9 @@ const CatalogPage = () => {
     localStorage.removeItem("tokem")
     navigate("/login")
   }
+  const handleBackToCatalog = () => {
+    navigate('/catalog');
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -88,6 +102,9 @@ const CatalogPage = () => {
             Каталог товаров
           </AnimatedTitle>
         </Box>
+        <GradientButton className="Btn" variant="contained" onClick={handleBackToCatalog}>
+              Мои заказы
+        </GradientButton>
         <Grid container spacing={4}>
           {products.map((product) => (
             <Grid item key={product.id} xs={12} sm={6} md={3}>

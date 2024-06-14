@@ -11,3 +11,20 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.Card{
+  border: 1px solid black;
+  border-radius: 30px;
+  padding: 30px;
+}
+.flex-card{
+  display: flex;
+  gap: 20px;
+}
+.flex-card_2{
+  display: flex;
+  justify-content: space-between;
+}
+.Btn{
+  position: absolute;
+  top:  45px;
+}
