@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Container, Typography, Card, CardContent, CardMedia, Box, Button, Stack } from '@mui/material';
-import axios from 'axios';
+import axios from './axios';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { styled } from '@mui/system';
-import { useCart } from './CartContext'; 
 
 const theme = createTheme({
   palette: {
@@ -61,44 +60,75 @@ const OutlineButton = styled(Button)(({ theme }) => ({
 const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const [added, setAdded] = useState(false);
   const navigate = useNavigate();
-  const { dispatch } = useCart(); 
 
   useEffect(() => {
     const fetchProduct = async () => {
-      const response = await axios.get(`https://fakestoreapi.com/products/${id}`);
-      setProduct(response.data);
+      try {
+        const response = await axios.get(`/product?product_id=${id}`);
+        setProduct(response.data[0]);
+      } catch (error) {
+        console.error('Failed to fetch product:', error);
+      }
+    };
+
+    const checkIfInCart = async () => {
+      try {
+        const response = await axios.get(`/incart?product_id=${id}`);
+        setAdded(response.data.added);
+      } catch (error) {
+        console.error('Failed to check if product is in cart:', error);
+      }
     };
 
     fetchProduct();
+    checkIfInCart();
   }, [id]);
 
-  if (!product) {
-    return <div>Loading...</div>;
-  }
+  const handleDeleteFromCart = async () => {
+    try {
+      await axios.post("remove-from-cart", { product_id: id });
+      setAdded(false);
+    } catch (error) {
+      console.error('Failed to remove product from cart:', error);
+    }
+  };
 
-  const handleAddToCart = () => {
-    dispatch({ type: 'ADD_TO_CART', payload: product });
-    navigate('/cart');
+  const handleAddToCart = async () => {
+    try {
+      await axios.post("add-to-cart", { product_id: id });
+      setAdded(true);
+    } catch (error) {
+      console.error('Failed to add product to cart:', error);
+    }
   };
 
   const handleClose = () => {
     navigate('/catalog');
   };
 
+  if (!product) {
+    return <div>Loading...</div>;
+  }
+
+  const handleCart = () =>{
+    navigate("/cart")
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Container>
         <Box textAlign="center" mt={5} mb={5}>
           <Typography variant="h3" gutterBottom>
-            {product.title}
+            {product.name}
           </Typography>
         </Box>
         <Card>
           <StyledCardMedia
             component="img"
-            alt={product.title}
-            image={product.image}
+            alt={product.name}
+            image={product.image_url}
           />
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
@@ -108,11 +138,20 @@ const ProductDetail = () => {
               {product.description}
             </Typography>
             <Stack direction="row" spacing={2} justifyContent="center" mt={4}>
-              <GradientButton variant="contained" onClick={handleAddToCart}>
-                Добавить в корзину
-              </GradientButton>
+              {added ? (
+                <GradientButton variant="contained" onClick={handleDeleteFromCart}>
+                  Удалить из корзины
+                </GradientButton>
+              ) : (
+                <GradientButton variant="contained" onClick={handleAddToCart}>
+                  Добавить в корзину
+                </GradientButton>
+              )}
               <OutlineButton variant="outlined" onClick={handleClose}>
                 Закрыть
+              </OutlineButton>
+              <OutlineButton variant="outlined" onClick={handleCart}>
+                Перейти в корзину
               </OutlineButton>
             </Stack>
           </CardContent>

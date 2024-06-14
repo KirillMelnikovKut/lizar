@@ -1,10 +1,10 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Typography, Card, CardContent, CardMedia, Box, Grid, Button, IconButton, Stack } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { styled } from '@mui/system';
-import { useCart } from './CartContext';
 import DeleteIcon from '@mui/icons-material/Delete';
+import axios from "./axios"
 
 const theme = createTheme({
   palette: {
@@ -46,11 +46,18 @@ const GradientButton = styled(Button)(({ theme }) => ({
 }));
 
 const CartPage = () => {
-  const { cart, dispatch } = useCart();
   const navigate = useNavigate();
+  const [cart, setCart] = useState([])
 
-  const handleRemoveFromCart = (index) => {
-    dispatch({ type: 'REMOVE_FROM_CART', payload: index });
+  useEffect(()=>{
+    axios.post("/getcart")
+    .then((res)=>{
+      setCart(res.data)
+    })
+  }, [])
+
+  const handleRemoveFromCart = (id) => {
+    
   };
 
   const handleBackToCatalog = () => {
@@ -75,12 +82,12 @@ const CartPage = () => {
               <Card>
                 <StyledCardMedia
                   component="img"
-                  alt={product.title}
-                  image={product.image}
+                  alt={product.name}
+                  image={product.image_url}
                 />
                 <CardContent>
                   <Typography gutterBottom variant="h6" component="div">
-                    {product.title}
+                    {product.name}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     ${product.price}
@@ -88,7 +95,7 @@ const CartPage = () => {
                   <IconButton
                     aria-label="delete"
                     color="secondary"
-                    onClick={() => handleRemoveFromCart(index)}
+                    onClick={() => handleRemoveFromCart(product.product_id)}
                   >
                     <DeleteIcon />
                   </IconButton>

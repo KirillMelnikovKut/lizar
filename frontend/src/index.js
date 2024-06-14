@@ -10,10 +10,8 @@ import ProductDetail from './ProductDetail';
 import CartPage from './CartPage';
 import CheckoutPage from './CheckoutPage';
 import OrderConfirmationPage from './OrderConfirmationPage'; 
-import { CartProvider } from './CartContext';
 
 const App = () => (
-  <CartProvider>
     <Router>
       <CssBaseline />
       <Routes>
@@ -27,7 +25,6 @@ const App = () => (
         <Route path="/order-confirmation" element={<OrderConfirmationPage />} /> 
       </Routes>
     </Router>
-  </CartProvider>
 );
 
 ReactDOM.render(<App />, document.getElementById('root'));

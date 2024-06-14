@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Container, Grid, Typography, Button, Card, CardContent, CardMedia, Box } from '@mui/material';
-import axios from 'axios';
+import axios from './axios';
 
 const theme = createTheme({
   palette: {
@@ -57,8 +57,8 @@ const HomePage = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const response = await axios.get('https://fakestoreapi.com/products');
-      setProducts(response.data.slice(0, 4)); // Получаем первые 4 товара
+      const response = await axios.get('/product');
+      setProducts(response.data.slice(0, 4));
     };
 
     fetchProducts();
@@ -81,13 +81,13 @@ const HomePage = () => {
               <Card>
                 <CardMedia
                   component="img"
-                  alt={product.title}
+                  alt={product.name}
                   height="250"
-                  image={product.image}
+                  image={product.image_url}
                 />
                 <CardContent>
                   <Typography gutterBottom variant="h6" component="div">
-                    {product.title}
+                    {product.name}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     ${product.price}

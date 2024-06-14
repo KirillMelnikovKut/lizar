@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Grid, Typography, Card, CardContent, CardMedia, Box } from '@mui/material';
 import { styled } from '@mui/system';
-import axios from 'axios';
+import axios from './axios';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const theme = createTheme({
@@ -64,7 +64,7 @@ const CatalogPage = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const response = await axios.get('https://fakestoreapi.com/products');
+      const response = await axios.get('/product');
       setProducts(response.data);
     };
 
@@ -74,6 +74,11 @@ const CatalogPage = () => {
   const handleProductClick = (id) => {
     navigate(`/product/${id}`);
   };
+
+  const handleExit = () => {
+    localStorage.removeItem("tokem")
+    navigate("/login")
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -86,15 +91,15 @@ const CatalogPage = () => {
         <Grid container spacing={4}>
           {products.map((product) => (
             <Grid item key={product.id} xs={12} sm={6} md={3}>
-              <Card onClick={() => handleProductClick(product.id)}>
+              <Card onClick={() => handleProductClick(product.product_id)}>
                 <StyledCardMedia
                   component="img"
-                  alt={product.title}
-                  image={product.image}
+                  alt={product.name}
+                  image={product.image_url}
                 />
                 <CardContent>
                   <Typography gutterBottom variant="h6" component="div">
-                    {product.title}
+                    {product.name}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     ${product.price}
@@ -104,6 +109,9 @@ const CatalogPage = () => {
             </Grid>
           ))}
         </Grid>
+        <div style={{marginTop:"16px", marginBottom:"16px", display: "flex", justifyContent: "end"}}>
+          <button style={{width:"100px", height: "32px", display:"flex", justifyContent:"center", alignItems:"center", border: "2px solid black", borderRadius: "8px"}} onClick={handleExit}>Выйти</button>
+        </div>
       </Container>
     </ThemeProvider>
   );

@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Container, Box, Typography, TextField, Button } from '@mui/material';
 import { styled } from '@mui/system';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import axios from './axios';
+import { useState } from 'react';
 
 const theme = createTheme({
   palette: {
@@ -60,9 +62,22 @@ const FormContainer = styled(Box)(({ theme }) => ({
 const LoginPage = () => {
   const navigate = useNavigate();
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [err, setErr] = useState('')
+
   const handleLogin = (e) => {
     e.preventDefault();
-    navigate('/catalog');
+    axios
+      .post("/auth", { email: email, password: password })
+      .then((res) => {
+        localStorage.setItem("token", res.data.token);
+        navigate("/catalog");
+      })
+      .catch((err) => {
+        console.log(err);
+        setErr(err.response.data.error)
+      });
   };
 
   return (
@@ -84,6 +99,8 @@ const LoginPage = () => {
               label="Электронная почта"
               type="email"
               required
+              value={email}
+              onChange={(e)=>setEmail(e.target.value)}
             />
             <TextField
               variant="outlined"
@@ -91,7 +108,10 @@ const LoginPage = () => {
               label="Пароль"
               type="password"
               required
+              value={password}
+              onChange={(e)=>setPassword(e.target.value)}
             />
+            {err}
             <Box textAlign="center" mt={4}>
               <Button type="submit" variant="contained" size="large">
                 Войти
